@@ -1,0 +1,48 @@
+package array;
+
+/**
+ * @author : xfhy
+ * Create time : 2020/6/27 9:52 上午
+ * Description : 1051. 高度检查器
+ * 考察: 排序后与原数组,相应索引处,是否相同,不相同则计数+1,最后计算所有不相同的个数.
+ */
+public class Solution {
+    public static int heightChecker(int[] heights) {
+        if (heights.length == 0) {
+            return 0;
+        }
+
+        //因为总长度是给了的: 100,直接定义1个数组arr长度是101,1代表身高是1...100代表身高是100
+        //arr[x]表示: x身高的人的个数,拿到所有的人的身高全部存入arr数组.
+        //从1到100遍历arr数组(相当于已排序),与原数组一一对应,不相同的话,则计数+1
+
+        int result = 0;
+        int[] arr = new int[101];
+        for (int height : heights) {
+            arr[height]++;
+        }
+
+        for (int i = 1, j = 0; i < arr.length; i++) {
+            if (arr[i] == 0) {
+                continue;
+            }
+            while (arr[i] != 0) {
+                if (i != heights[j]) {
+                    result++;
+                }
+                arr[i]--;
+                j++;
+            }
+            if (j == heights.length) {
+                break;
+            }
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        int heightChecker = heightChecker(new int[]{1, 2, 3, 4, 5});
+        System.out.println(heightChecker);
+    }
+
+}
