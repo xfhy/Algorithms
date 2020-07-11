@@ -1,3 +1,4 @@
+```java
 package array;
 
 import java.util.Arrays;
@@ -73,3 +74,5 @@ public class Solution {
     }
 
 }
+
+```
