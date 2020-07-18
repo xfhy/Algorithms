@@ -1,77 +1,44 @@
-import java.util.Arrays;
-import java.util.LinkedList;
-
 /**
  * @author : xfhy
- * Create time : 2020年07月12日19:24:32
- * Description : 剑指 Offer 06. 从尾到头打印链表
+ * Create time : 2020年07月18日15:16:37
+ * Description : 1512. 好数对的数目
  */
 public class Solution {
 
-    public static class ListNode {
-        int val;
-        ListNode next;
-
-        ListNode(int x) {
-            val = x;
-        }
-    }
-
     /**
-     * 用栈的方式实现,先压栈,再出栈
+     * 用一个数组记录一下哪些数字超过了1,超过1的话,则计算一下x-1到1的等差队列之和
      */
-    public static int[] reversePrint(ListNode head) {
-        if (head == null) {
-            return new int[0];
+    public static int numIdenticalPairs(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
         }
-        LinkedList<Integer> stack = new LinkedList<>();
-        ListNode temp = head;
-        while (temp != null) {
-            stack.push(temp.val);
-            temp = temp.next;
+        int[] myNums = new int[101];
+        for (int num : nums) {
+            myNums[num]++;
         }
-        int size = stack.size();
-        int[] result = new int[size];
-        int index = 0;
-        while (index < size) {
-            result[index] = stack.pop();
-            index++;
+        int result = 0;
+        for (int myNum : myNums) {
+            result += getNum(myNum);
         }
         return result;
     }
 
-    /**
-     * 题目说了最大长度是10000,则先放入一个大数组再取出来.
-     */
-    public static int[] reversePrint2(ListNode head) {
-        if (head == null) {
-            return new int[0];
+    public static int getNum(int num) {
+        if (num <= 1) {
+            return 0;
         }
-        int[] maxArray = new int[10000];
-        int index = 0;
-        ListNode temp = head;
-        while (temp != null) {
-            maxArray[index] = temp.val;
-            temp = temp.next;
-            index++;
-        }
-        int[] result = new int[index];
-        for (int i = 0; i < index; i++) {
-            result[i] = maxArray[index - i - 1];
+        int result = 0;
+        for (int i = num - 1; i > 0; i--) {
+            result += i;
         }
         return result;
     }
 
     public static void main(String[] args) {
-        ListNode head = new ListNode(0);
-        ListNode listNode = new ListNode(1);
-        ListNode next1 = new ListNode(3);
-        listNode.next = next1;
-        ListNode next2 = new ListNode(2);
-        next1.next = next2;
-
-        head.next = listNode;
-        System.out.println(Arrays.toString(reversePrint2(head)));
+        int[] array = new int[]{1, 2, 3, 1, 1, 3};
+        int[] array2 = new int[]{1,1,1,1};
+        int[] array3 = new int[]{1,2,3};
+        System.out.println(numIdenticalPairs(array3));
     }
 
 }
