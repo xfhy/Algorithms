@@ -1,6 +1,7 @@
 package tree;
 
 import java.util.LinkedList;
+import java.util.Stack;
 
 /**
  * @author : xfhy
@@ -61,6 +62,29 @@ public class BinaryTree {
         postOrderTraveral(node.leftChild);
         postOrderTraveral(node.rightChild);
         System.out.println(node.data);
+    }
+
+    /**
+     * 二叉树非递归前序遍历
+     * 使用栈来实现
+     * @param root 二叉树根节点
+     */
+    public void preOrderTraveralWithStack(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode treeNode = root;
+        while (treeNode != null || !stack.isEmpty()) {
+            //不断往栈中压入左节点,直到左边没有左节点
+            while (treeNode != null) {
+                System.out.println(treeNode.data);
+                stack.push(treeNode);
+                treeNode = treeNode.leftChild;
+            }
+            //弹栈 访问右边节点
+            if (!stack.isEmpty()) {
+                treeNode = stack.pop();
+                treeNode = treeNode.rightChild;
+            }
+        }
     }
 
 }
