@@ -5,6 +5,7 @@ package array;
  * @author : xfhy
  * Create time : 2020年07月05日10:20:18
  * Description : 剑指 Offer 53 - I. 在排序数组中查找数字 I
+ * https://leetcode-cn.com/problems/zai-pai-xu-shu-zu-zhong-cha-zhao-shu-zi-lcof
  */
 public class Solution {
     public static int search(int[] nums, int target) {

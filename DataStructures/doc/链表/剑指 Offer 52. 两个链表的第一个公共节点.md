@@ -1,8 +1,9 @@
+```java
 /**
  * @author : xfhy
  * Create time : 2020年07月19日21:53:58
  * Description : 剑指 Offer 52. 两个链表的第一个公共节点
- * source :
+ * https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/
  */
 public class Solution {
 
@@ -51,3 +52,5 @@ public class Solution {
     }
 
 }
+
+```

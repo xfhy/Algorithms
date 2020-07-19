@@ -6,6 +6,7 @@ import java.util.LinkedList;
  * @author : xfhy
  * Create time : 2020年07月12日19:24:32
  * Description : 剑指 Offer 06. 从尾到头打印链表
+ * https://leetcode-cn.com/problems/cong-wei-dao-tou-da-yin-lian-biao-lcof
  */
 public class Solution {
 
