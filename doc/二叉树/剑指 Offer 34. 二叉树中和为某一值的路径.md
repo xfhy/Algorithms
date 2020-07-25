@@ -1,3 +1,4 @@
+```java
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -26,9 +27,9 @@ public class Solution {
     /**
      * 思路,回朔法
      * 申请一条链表,用于记录一条路径,如果这条路径的和为0,则记录下这条路径
-     *
+     * 
      */
-
+    
     static LinkedList<List<Integer>> res = new LinkedList<>();
     static LinkedList<Integer> path = new LinkedList<>();
 
@@ -79,3 +80,5 @@ public class Solution {
     }
 
 }
+
+```
