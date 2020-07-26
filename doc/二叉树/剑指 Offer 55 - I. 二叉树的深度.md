@@ -1,3 +1,4 @@
+```java
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -26,7 +27,7 @@ public class Solution {
     /**
      * 思路: DFS   后序遍历
      * 左边深度+右边深度+1
-     *
+     * 
      * 下面的解法2思路是一样的,只不过代码看着更短.
      */
     public static int maxDepth(TreeNode root) {
@@ -78,3 +79,5 @@ public class Solution {
     }
 
 }
+
+```
