@@ -3,9 +3,9 @@ import java.util.*;
 
 /**
  * @author : xfhy
- * Create time : 2020年7月28日09:44:20
- * Description : 剑指 Offer 32 - I. 从上到下打印二叉树
- * source : https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-lcof/
+ * Create time : 2020年7月29日09:24:34
+ * Description : 剑指 Offer 32 - II. 从上到下打印二叉树 II
+ * source : https://leetcode-cn.com/problems/cong-shang-dao-xia-da-yin-er-cha-shu-ii-lcof/
  */
 public class Solution {
 
@@ -19,32 +19,30 @@ public class Solution {
         }
     }
 
-    private static List<Integer> elements = new LinkedList<>();
-    private static Queue<TreeNode> traverse = new LinkedList<>();
-
     /**
-     * 方案1  通过队列的方式,将每一层的元素插入到队列
-     * 广度优先遍历
+     * 思路 : 用队列存储每一层的元素,然后循环这一层,添加到temp集合中.再把temp集合添加到结果中
      */
-    public static int[] levelOrder(TreeNode root) {
+    public static List<List<Integer>> levelOrder(TreeNode root) {
         if (root == null) {
-            return new int[0];
+            return new LinkedList<>();
         }
-        traverse.offer(root);
+        List<List<Integer>> result = new LinkedList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
         TreeNode temp = root;
-        while (!traverse.isEmpty()) {
-            temp = traverse.poll();
-            elements.add(temp.val);
-            if (temp.left != null) {
-                traverse.offer(temp.left);
+        while (!queue.isEmpty()) {
+            LinkedList<Integer> tempList = new LinkedList<>();
+            for (int i = queue.size() - 1; i >= 0; i--) {
+                temp = queue.poll();
+                tempList.add(temp.val);
+                if (temp.left != null) {
+                    queue.offer(temp.left);
+                }
+                if (temp.right != null) {
+                    queue.offer(temp.right);
+                }
             }
-            if (temp.right != null) {
-                traverse.offer(temp.right);
-            }
-        }
-        int[] result = new int[elements.size()];
-        for (int i = 0; i < elements.size(); i++) {
-            result[i] = elements.get(i);
+            result.add(tempList);
         }
         return result;
     }
@@ -68,10 +66,10 @@ public class Solution {
                 5, null, null, 1));*/
         /*LinkedList<Integer> integers = new LinkedList<>(Arrays.asList(3, 2, 9, null, null, 10, null,
                 null, 8, null, 4));*/
-        LinkedList<Integer> integers = new LinkedList<>(Arrays.asList(3, 9, 20, null, null, 15, 7));
+        LinkedList<Integer> integers = new LinkedList<>(Arrays.asList(3, 9, null, null, 20, 15, null, null, 7));
         TreeNode binaryTree = createBinaryTree(integers);
 
-        System.out.println(Arrays.toString(levelOrder(binaryTree)));
+        System.out.println(levelOrder(binaryTree));
     }
 
 }
