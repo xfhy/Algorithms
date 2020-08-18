@@ -46,7 +46,7 @@ public class Solution {
         //根据前序构建根节点
         TreeNode root = new TreeNode(preorder[0]);
 
-        //找到根节点在后序中的位置,才知道根节点的左子树和右子树
+        //找到根节点在中序中的位置,才知道根节点的左子树和右子树
         int leftSize = find(inorder, root.val);
 
         //切分出根节点的左子树的前序和中序,然后递归去创建左子树
