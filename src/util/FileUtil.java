@@ -16,7 +16,7 @@ public class FileUtil {
 
     public static void main(String[] args) {
 
-        File file = new File("/Users/xfhy/use/Github/Algorithms/doc");
+        File file = new File("/Users/xfhy/use/Github/Algorithms/notAdd");
         File[] dirs = file.listFiles();
         for (File dir : dirs) {
             if (!dir.isDirectory()) {
@@ -61,7 +61,7 @@ public class FileUtil {
                 result = result.replaceAll("%3A", ":").replaceAll("%2F", "/").replaceAll("\\+", "%20");//+实际上是 空格 url encode而来
 
                 System.out.println(stringBuilder.toString());
-                System.out.println(result);
+                //System.out.println(result);
 
 
                 //boolean renameTo = file1.renameTo(new File(dir.getAbsolutePath(), file1Name));
