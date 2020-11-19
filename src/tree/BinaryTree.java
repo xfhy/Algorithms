@@ -15,12 +15,12 @@ public class BinaryTree {
      * 二叉树节点
      */
     public static class TreeNode {
-        public int data;
-        public TreeNode leftChild;
-        public TreeNode rightChild;
+        public int val;
+        public TreeNode left;
+        public TreeNode right;
 
-        public TreeNode(int data) {
-            this.data = data;
+        public TreeNode(int val) {
+            this.val = val;
         }
     }
 
@@ -32,8 +32,8 @@ public class BinaryTree {
         Integer data = inputList.removeFirst();
         if (data != null) {
             node = new TreeNode(data);
-            node.leftChild = createBinaryTree(inputList);
-            node.rightChild = createBinaryTree(inputList);
+            node.left = createBinaryTree(inputList);
+            node.right = createBinaryTree(inputList);
         }
         return node;
     }
@@ -42,27 +42,27 @@ public class BinaryTree {
         if (node == null) {
             return;
         }
-        System.out.println(node.data);
-        preOrderTraveral(node.leftChild);
-        preOrderTraveral(node.rightChild);
+        System.out.println(node.val);
+        preOrderTraveral(node.left);
+        preOrderTraveral(node.right);
     }
 
     public void inOrderTraveral(TreeNode node) {
         if (node == null) {
             return;
         }
-        inOrderTraveral(node.leftChild);
-        System.out.println(node.data);
-        inOrderTraveral(node.rightChild);
+        inOrderTraveral(node.left);
+        System.out.println(node.val);
+        inOrderTraveral(node.right);
     }
 
     public void postOrderTraveral(TreeNode node) {
         if (node == null) {
             return;
         }
-        postOrderTraveral(node.leftChild);
-        postOrderTraveral(node.rightChild);
-        System.out.println(node.data);
+        postOrderTraveral(node.left);
+        postOrderTraveral(node.right);
+        System.out.println(node.val);
     }
 
     /**
@@ -77,14 +77,14 @@ public class BinaryTree {
         while (treeNode != null || !stack.isEmpty()) {
             //不断往栈中压入左节点,直到左边没有左节点
             while (treeNode != null) {
-                System.out.println(treeNode.data);
+                System.out.println(treeNode.val);
                 stack.push(treeNode);
-                treeNode = treeNode.leftChild;
+                treeNode = treeNode.left;
             }
             //弹栈 访问右边节点
             if (!stack.isEmpty()) {
                 treeNode = stack.pop();
-                treeNode = treeNode.rightChild;
+                treeNode = treeNode.right;
             }
         }
     }
@@ -99,12 +99,12 @@ public class BinaryTree {
         queue.offer(root);
         while (!queue.isEmpty()) {
             TreeNode node = queue.poll();
-            System.out.println(node.data);
-            if (node.leftChild != null) {
-                queue.offer(node.leftChild);
+            System.out.println(node.val);
+            if (node.left != null) {
+                queue.offer(node.left);
             }
-            if (node.rightChild != null) {
-                queue.offer(node.rightChild);
+            if (node.right != null) {
+                queue.offer(node.right);
             }
         }
     }
