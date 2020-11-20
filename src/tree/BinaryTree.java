@@ -1,6 +1,7 @@
 package tree;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -66,7 +67,7 @@ public class BinaryTree {
     }
 
     /**
-     * 二叉树非递归前序遍历
+     * 前序遍历 二叉树 非递归实现思路1
      * 使用栈来实现
      *
      * @param root 二叉树根节点
@@ -84,6 +85,55 @@ public class BinaryTree {
             //弹栈 访问右边节点
             if (!stack.isEmpty()) {
                 treeNode = stack.pop();
+                treeNode = treeNode.right;
+            }
+        }
+    }
+
+    /**
+     * 前序遍历 二叉树 非递归实现思路2 BFS
+     * 从根节点开始压栈,每次迭代弹出栈顶节点,然后压入子节点,先压右节点,再压左节点,每次弹出栈顶的时候将栈顶节点的数据存入结果List中.
+     * 最后的输出顺序是由上往下,由左往右,符合前序遍历的顺序
+     * 相关题: 144
+     */
+    public List<Integer> preorderTraversal2(TreeNode root) {
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        LinkedList<Integer> preList = new LinkedList<>();
+        if (root == null) {
+            return preList;
+        }
+        stack.add(root);
+        while (!stack.isEmpty()) {
+            TreeNode pop = stack.pop();
+            preList.add(pop.val);
+            if (pop.right != null) {
+                stack.push(pop.right);
+            }
+            if (pop.left != null) {
+                stack.push(pop.left);
+            }
+        }
+        return preList;
+    }
+
+    /**
+     * 中序遍历,非递归
+     * 在前序遍历的基础上,只需要稍等改动一下sout的位置即可.
+     * 从根节点开始找二叉树的最左节点,找到最左节点后访问,对于每个节点来说,它都是以自己为根的子树的根节点,访问完之后就可以转到右儿子上了.
+     */
+    public void middleOrderTraversal(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode treeNode = root;
+        while (treeNode != null || !stack.isEmpty()) {
+            //不断往栈中压入左节点,直到左边没有左节点
+            while (treeNode != null) {
+                stack.push(treeNode);
+                treeNode = treeNode.left;
+            }
+            //弹栈 访问右边节点
+            if (!stack.isEmpty()) {
+                treeNode = stack.pop();
+                System.out.println(treeNode.val);
                 treeNode = treeNode.right;
             }
         }

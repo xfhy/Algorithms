@@ -17,7 +17,7 @@ public class BinaryTreeTest {
 
         BinaryTree.TreeNode treeNode = binaryTree.createBinaryTree(integers);
         System.out.println("前序遍历");
-//        binaryTree.preOrderTraveral(treeNode);
+//        System.out.println(binaryTree.preorderTraversal2(treeNode));
         binaryTree.preOrderTraveralWithStack(treeNode);
         System.out.println("中序遍历");
         binaryTree.inOrderTraveral(treeNode);
