@@ -145,6 +145,10 @@ public class BinaryTree {
      * @param root 二叉树根节点
      */
     public void levelOrderTraversal(TreeNode root) {
+        //1. 声明一个队列,将根节点入队
+        //2. 然后将根节点出队,在根节点出队时将根节点的左节点和右节点都入队
+        //3. 循环遍历队列,依次出队,在第2步中的左节点出队时,将自己视为根节点,然后将左右节点入队. 同理,右节点也一样
+        //4. 遍历完队列时,所有节点的左右节点都遍历完了.
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
         while (!queue.isEmpty()) {
@@ -157,6 +161,20 @@ public class BinaryTree {
                 queue.offer(node.right);
             }
         }
+    }
+
+    /**
+     * 二叉树的最大深度
+     * 思路: 比较左子树的最大深度和右子树的最大深度,
+     * 左子树的最大深度同样也适用于这种思路,右子树的最大深度同样也适用于这种思路
+     * 这就很适合递归,在访问到空节点时退出.
+     * 最后深度需要+1,因为需要计算上根节点.
+     */
+    public static int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
     }
 
 }
