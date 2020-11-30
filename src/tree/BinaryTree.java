@@ -164,6 +164,33 @@ public class BinaryTree {
     }
 
     /**
+     * 二叉树层序遍历 且记录每一层的所有元素
+     *
+     * @param root 二叉树根节点
+     */
+    public List<List<TreeNode>> levelOrderTraversals(TreeNode root) {
+        Queue<TreeNode> queue = new LinkedList<>();
+        List<List<TreeNode>> tree = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            LinkedList<TreeNode> levels = new LinkedList<>();
+            for (int i = 0; i < size; i++) {
+                TreeNode poll = queue.poll();
+                levels.add(poll);
+                if (poll.left != null) {
+                    queue.offer(poll.left);
+                }
+                if (poll.right != null) {
+                    queue.offer(poll.right);
+                }
+            }
+            tree.add(levels);
+        }
+        return tree;
+    }
+
+    /**
      * 二叉树的最大深度
      * 思路: 比较左子树的最大深度和右子树的最大深度,
      * 左子树的最大深度同样也适用于这种思路,右子树的最大深度同样也适用于这种思路

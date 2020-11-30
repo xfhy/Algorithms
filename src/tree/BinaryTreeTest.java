@@ -2,6 +2,7 @@ package tree;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author : xfhy
@@ -24,7 +25,9 @@ public class BinaryTreeTest {
         System.out.println("后序遍历");
         binaryTree.postOrderTraveral(treeNode);
         System.out.println("层序遍历");
-        binaryTree.levelOrderTraversal(treeNode);
+//        binaryTree.levelOrderTraversal(treeNode);
+        List<List<BinaryTree.TreeNode>> lists = binaryTree.levelOrderTraversals(treeNode);
+        System.out.println(lists);
     }
 
 }
