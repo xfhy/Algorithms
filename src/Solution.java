@@ -2,9 +2,9 @@ import java.util.*;
 
 /**
  * @author : xfhy
- * Create time : 2020年12月29日08:17:09
- * Description : 563. 二叉树的坡度
- * source : https://leetcode-cn.com/problems/binary-tree-tilt/
+ * Create time : 2020年12月30日08:17:09
+ * Description : 572. 另一个树的子树
+ * source : https://leetcode-cn.com/problems/subtree-of-another-tree/
  */
 public class Solution {
 
@@ -33,45 +33,42 @@ public class Solution {
         }
     }
 
+    //todo xfhy 看看这里是否还有其他思路
+
     /**
-     * 思路1 递归: 计算当前节点的左子树与右子树之差,再计算当前节点的左子树的坡度,再计算当前节点的右子树的坡度,然后加起来.
+     * 思路1: 暴力求解,dfs遍历s中的所有节点,判断一下以这个节点为根节点的树是否和t一致,一致则返回true
      */
-    public static int findTilt(TreeNode root) {
-        if (root == null) {
-            return 0;
+    public static boolean isSubtree(TreeNode s, TreeNode t) {
+        return dfs(s, t);
+    }
+
+    public static boolean dfs(TreeNode s, TreeNode t) {
+        if (s == null) {
+            return false;
         }
-        return Math.abs(subtreeAnd(root.left) - subtreeAnd(root.right)) + findTilt(root.left) + findTilt(root.right);
-    }
-
-    public static int subtreeAnd(TreeNode root) {
-        if (root == null) {
-            return 0;
+        //检查某个节点是否ok
+        if (check(s, t)) {
+            return true;
         }
-        return root.val + subtreeAnd(root.left) + subtreeAnd(root.right);
-    }
-
-    //思路2: 二叉树的每个节点都调用一下traverse,traverse将该节点的左右子树和(在里面需要计算以当前节点的二叉树之和)的差(坡度)计算出来,然后加到result(坡度最后的结果)里面.
-    private static int result = 0;
-
-    public static int findTilt2(TreeNode root) {
-        traverse(root);
-        return result;
-    }
-
-    private static int traverse(TreeNode root) {
-        if (root == null) {
-            return 0;
+        //去检查其他节点
+        if (dfs(s.left, t)) {
+            return true;
         }
-        int left = traverse(root.left);
-        int right = traverse(root.right);
-
-        //将当前节点的左右子树和的差(坡度)计算出来,然后加到result里面
-        result += Math.abs(left - right);
-
-        //计算以当前节点为根节点的二叉树之和
-        return left + right + root.val;
+        if (dfs(s.right, t)) {
+            return true;
+        }
+        return false;
     }
 
+    public static boolean check(TreeNode s, TreeNode t) {
+        if (s == null && t == null) {
+            return true;
+        }
+        if (s == null || t == null || s.val != t.val) {
+            return false;
+        }
+        return check(s.left, t.left) && check(s.right, t.right);
+    }
 
     public static TreeNode createBinaryTree(LinkedList<Integer> inputList) {
         if (inputList == null || inputList.isEmpty()) {
@@ -92,10 +89,13 @@ public class Solution {
                 5, null, null, 1));*/
         /*LinkedList<Integer> integers = new LinkedList<>(Arrays.asList(3, 2, 9, null, null, 10, null,
                 null, 8, null, 4));*/
-        LinkedList<Integer> integers = new LinkedList<>(Arrays.asList(4, 2, 3, null, null, 5, null, null, 9, null, 7));
-        TreeNode binaryTree = createBinaryTree(integers);
+        LinkedList<Integer> integers1 = new LinkedList<>(Arrays.asList(1, 1));
+        TreeNode binaryTree1 = createBinaryTree(integers1);
 
-        int res = findTilt2(binaryTree);
+        LinkedList<Integer> integers2 = new LinkedList<>(Arrays.asList(1));
+        TreeNode binaryTree2 = createBinaryTree(integers2);
+
+        boolean res = isSubtree(binaryTree1, binaryTree2);
         System.out.println(res);
     }
 
