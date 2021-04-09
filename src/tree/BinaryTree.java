@@ -1,9 +1,6 @@
 package tree;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author : xfhy
@@ -38,6 +35,9 @@ public class BinaryTree {
         }
         return node;
     }
+
+    //深度优先搜索(DFS) : 采用深度作为优先级,以便从根开始一直到达某个确定的叶子,然后再返回根到达另一个分支.深度优先搜索策略又可以根据根节点,左孩子和右孩子的相对顺序被细分为前序遍历,中序遍历,后续遍历
+    //宽度优先搜索(BFS) : 按照高度顺序一层一层的访问整棵树,高层次的节点将会比低层次的节点先被访问到
 
     public void preOrderTraveral(TreeNode node) {
         if (node == null) {
@@ -91,7 +91,7 @@ public class BinaryTree {
     }
 
     /**
-     * 前序遍历 二叉树 非递归实现思路2 BFS
+     * 前序遍历 二叉树 非递归实现思路2
      * 从根节点开始压栈,每次迭代弹出栈顶节点,然后压入子节点,先压右节点,再压左节点,每次弹出栈顶的时候将栈顶节点的数据存入结果List中.
      * 最后的输出顺序是由上往下,由左往右,符合前序遍历的顺序
      * 相关题: 144
@@ -137,6 +137,31 @@ public class BinaryTree {
                 treeNode = treeNode.right;
             }
         }
+    }
+
+    /**
+     * 后序遍历(前后中)
+     * 其实只需要在先序遍历的基础上稍微改改就行了,先序是:中前后,改一下while中的左右压栈顺序就是: 中后前,得到数据之后再反转,即:前后中.就得到了最后的结果
+     */
+    public List<Integer> postOrderTraversal(TreeNode root) {
+        LinkedList<Integer> res = new LinkedList<>();
+        if (root == null) {
+            return res;
+        }
+        LinkedList<TreeNode> stack = new LinkedList<>();
+        stack.add(root);
+        while (!stack.isEmpty()) {
+            TreeNode pop = stack.pop();
+            res.add(pop.val);
+            if (pop.left != null) {
+                stack.push(pop.left);
+            }
+            if (pop.right != null) {
+                stack.push(pop.right);
+            }
+        }
+        Collections.reverse(res);
+        return res;
     }
 
     /**
