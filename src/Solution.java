@@ -1,56 +1,34 @@
 
 /**
  * @author : xfhy
- * Create time : 2021年04月20日08:58:46
- * Description : 33. 搜索旋转排序数组
- * source : https://leetcode-cn.com/problems/search-in-rotated-sorted-array/
+ * Create time : 2021年04月21日08:58:46
+ * Description : 35. 搜索插入位置
+ * source : https://leetcode-cn.com/problems/search-insert-position/
  */
 public class Solution {
 
     /**
-     * 思路: 用二分查找
-     * 1. 如果左边有序，并且target在区间[left,mid-1]里面，则将区间收缩至[left,mid-1]，否则将区间收缩至[mid+1,right]
-     * 2. 如果右边有序，并且target在区间[mid+1,right]里面，则将区间收缩至[mid+1,right]，否则将区间收缩至[left,mid-1]
+     * 二分查找 找得到就返回找到的位置,找不到就返回查找到最后时的left值,此时的left是最接近target值的位置
      */
-    public int search(int[] nums, int target) {
-        if (nums == null || nums.length == 0) {
-            return -1;
-        }
-        if (nums.length == 1) {
-            return nums[0] == target ? 0 : -1;
-        }
+    public int searchInsert(int[] nums, int target) {
         int left = 0, right = nums.length - 1, mid;
         while (left <= right) {
             mid = left + (right - left) / 2;
             if (nums[mid] == target) {
-                //k的index
                 return mid;
-            }
-
-            //left可能等于mid
-            if (nums[left] <= nums[mid]) {
-                //左边有序   nums[left]可能等于target，等于的时候，right那边需要收缩成mid-1
-                if (nums[mid] > target && nums[left] <= target) {
-                    right = mid - 1;
-                } else {
-                    left = mid + 1;
-                }
+            } else if (nums[mid] < target) {
+                left = mid + 1;
             } else {
-                //右边有序
-                if (nums[mid] < target && nums[right] >= target) {
-                    left = mid + 1;
-                } else {
-                    right = mid - 1;
-                }
+                right = mid - 1;
             }
         }
-        return -1;
+        return left;
     }
 
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-        System.out.println(solution.search(new int[]{4, 5, 6, 7, 0, 1, 2}, 0));
+        System.out.println(solution.searchInsert(new int[]{0}, 8));
     }
 
 }
