@@ -1,98 +1,67 @@
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author : xfhy
  * Create time : 2021年05月8日08:58:46
- * Description : 322. 零钱兑换
+ * Description :
  * source : https://leetcode-cn.com/problems/coin-change/
  */
 public class Solution {
 
-    //思路1: 计算amount=11时的最少硬币数只需要知道amount=10的最少硬币数,在此基础上加1即可.
-    //思路2: 在思路1的基础上加上备忘录,每个amount的对应最少硬币数,记录下来
-    //思路3: 在思路2的基础上,利用dp table,从前往后记录,dp数组的定义:当目标金额为i时,至少需要dp[i]枚硬币凑出
+    //问题:输入一组不重复的数字,返回它们的全排列
 
-    //----------------------------------------思路1 start -------------------------------------
-    private int result = Integer.MAX_VALUE;
+    //思路:首先这题肯定是求所有答案,也就是全部穷举完,回朔法
+    //核心就是:
+    /*
 
-    public int coinChange1(int[] coins, int amount) {
-        return dp1(coins, amount);
+    for 选择 in 选择列表:
+        # 做选择
+        将该选择从选择列表中移除
+        路径.add(选择)
+        backtrack(路径,选择列表)
+        # 撤销选择
+        路径.remove(选择)
+        将该选择恢复到选择列表
+
+    * */
+
+    List<List<Integer>> res = new ArrayList<>();
+
+    List<List<Integer>> permute1(int[] nums) {
+        List<Integer> track = new ArrayList<>();
+        backtrack(track, nums);
+        return res;
     }
 
-    private int dp1(int[] coins, int amount) {
-        //base case
-        if (amount == 0) return 0;
-        if (amount < 0) return -1;
-
-        for (int coin : coins) {
-            //子问题
-            int subProblem = dp1(coins, amount - coin);
-            //子问题 无解  跳过
-            if (subProblem == -1) continue;
-            //子问题需要个硬币数+1 (这个+1是指的这次减掉的coin,使用了一枚硬币,所以需要+1)
-            result = Math.min(result, subProblem) + 1;
+    /**
+     * 回溯
+     *
+     * @param track 路径
+     * @param nums  选择列表
+     */
+    public void backtrack(List<Integer> track, int nums[]) {
+        //已完成路径
+        if (track.size() == nums.length) {
+            res.add(new ArrayList<>(track));
+            return;
         }
-
-        return result;
+        for (int i = 0; i < nums.length; i++) {
+            //路径中已存在 该选择
+            if (track.contains(nums[i])) continue;
+            //做出选择
+            track.add(nums[i]);
+            //回溯
+            backtrack(track, nums);
+            //撤销选择
+            track.remove(track.size() - 1);
+        }
     }
-    //----------------------------------------思路1 end -------------------------------------
-
-    //----------------------------------------思路2 start -------------------------------------
-    private HashMap<Integer, Integer> mMemo = new HashMap<>();
-
-    public int coinChange2(int[] coins, int amount) {
-        mMemo.put(0, 0);
-        return dp2(coins, amount);
-    }
-
-    private int dp2(int[] coins, int amount) {
-        if (mMemo.containsKey(amount)) {
-            return mMemo.get(amount);
-        }
-        //base case
-        if (amount == 0) return 0;
-        if (amount < 0) return -1;
-
-        //临时写一个变量,用于记录对于金额amount来说的所需的最少硬币数
-        int result = Integer.MAX_VALUE;
-        for (int coin : coins) {
-            int subProblem = dp2(coins, amount - coin);
-            if (subProblem == -1) continue;
-            result = Math.min(result, subProblem + 1);
-        }
-        mMemo.put(amount, result == Integer.MAX_VALUE ? -1 : result);
-        return mMemo.get(amount);
-    }
-    //----------------------------------------思路2 end -------------------------------------
-
-    //----------------------------------------思路3 start -------------------------------------
-    //在思路2的基础上,利用dp table,从前往后记录,dp数组的定义:当目标金额为i时,至少需要dp[i]枚硬币凑出
-    public int coinChange3(int[] coins, int amount) {
-        int[] dpTable = new int[amount + 1];
-        dpTable[0] = 0;
-        for (int i = 1; i < dpTable.length; i++) {
-            //dp table的所有元素初始值设为amount + 1,硬币数不可能超过amount,所以设为amount+1比较合适
-            dpTable[i] = amount + 1;
-        }
-        //遍历所有状态的所有取值
-        for (int i = 1; i < dpTable.length; i++) {
-            //内层for循环求所有选择的最小值
-            for (int coin : coins) {
-                //子问题无解
-                if (i - coin < 0) continue;
-                                        //子问题: 金额i减去coin所需硬币的最少值
-                dpTable[i] = Math.min(dpTable[i], dpTable[i - coin] + 1);
-            }
-        }
-        return dpTable[amount] == (amount + 1) ? -1 : dpTable[amount];
-    }
-    //----------------------------------------思路3 end -------------------------------------
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-//        System.out.println(solution.coinChange1(new int[]{1, 2, 5}, 8));
-//        System.out.println(solution.coinChange2(new int[]{1, 2, 5}, 10));
-        System.out.println(solution.coinChange3(new int[]{3,  5}, 8));
+
+        System.out.println(solution.permute1(new int[]{3, 5, 7}));
     }
 
 }
