@@ -1,122 +1,78 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * @author : xfhy
- * Create time : 2021年05月12日08:58:46
- * Description : 51. N 皇后
- * source : https://leetcode-cn.com/problems/n-queens/
+ * Create time : 2021年05月14日08:58:46
+ * Description : 111. 二叉树的最小深度
+ * source : https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/
  */
 public class Solution {
+    public static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
 
-    //n皇后问题 研究的是如何将 n个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
-    //
-    //给你一个整数 n ，返回所有不同的n皇后问题 的解决方案。
-    //
-    //每一种解法包含一个不同的n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
-
-    //思路:首先这题肯定是求所有答案,也就是全部穷举完,回朔法
-    //核心就是:
-    /*
-
-    for 选择 in 选择列表:
-        # 做选择
-        将该选择从选择列表中移除
-        路径.add(选择)
-        backtrack(路径,选择列表)
-        # 撤销选择
-        路径.remove(选择)
-        将该选择恢复到选择列表
-
-    * */
-
-    List<List<String>> res = new ArrayList<>();
-
-    public List<List<String>> solveNQueens(int n) {
-        //board: 一个棋盘
-        List<String> board = new ArrayList<>();
-        //一行
-        char[] chars = new char[n];
-        Arrays.fill(chars, '.');
-        for (int i = 0; i < n; i++) {
-            board.add(new String(chars));
-        }
-        backtrack(board, 0);
-        return res;
-    }
-
-    /**
-     * 路径: 记录在board中
-     * 选择列表: board中的第row行的任意一列
-     * 结束条件: 最后一行都已经做出选择了
-     *
-     * @param board 棋盘
-     * @param row   第几行
-     */
-    private void backtrack(List<String> board, int row) {
-        //触发结束条件
-        if (board.size() == row) {
-            res.add(new ArrayList<>(board));
-            return;
-        }
-        String rowText = board.get(row);
-        for (int col = 0; col < rowText.length(); col++) {
-            //不合法,排除
-            if (!isValid(board, row, col)) continue;
-            //做出选择  在这一行的第i个节点放置皇后
-            placeChess(board, row, col, 'Q');
-
-            //回溯   进入下一层决策树
-            backtrack(board, row + 1);
-
-            //撤销选择
-            placeChess(board, row, col, '.');
+        TreeNode(int x) {
+            val = x;
         }
     }
 
-    private void placeChess(List<String> board, int row, int index, char data) {
-        char[] chars = new char[board.size()];
-        Arrays.fill(chars, '.');
-        chars[index] = data;
-        board.set(row, new String(chars));
+    //二叉树的最小深度
+    //使用BFS 广度优先搜索 ,空间复杂度稍微高一些
+    //使用DFS 深度优先搜索, 空间复杂度稍微低一些
+
+    //这里使用BFS框架
+
+    int minDepth(TreeNode root) {
+        if (root == null) return 0;
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        //root本身占一层,所以初始化为1
+        int depth = 1;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            //将当前队列中的所有节点向四周扩散
+            for (int i = 0; i < size; i++) {
+                TreeNode cur = queue.poll();
+                //判断是否到达终点
+                if (cur.left == null && cur.right == null) {
+                    return depth;
+                }
+                //将cur相邻节点加入队列
+                if (cur.left != null) {
+                    queue.offer(cur.left);
+                }
+                if (cur.right != null) {
+                    queue.offer(cur.right);
+                }
+            }
+            //将这一层的全部添加完成  增加步数
+            depth++;
+        }
+        return depth;
     }
 
-    /**
-     * 判断皇后放置在row行col列是否合法
-     * 这里只需要判断在 同一列中的正上方&&左上&&右上  是否有皇后即可.因为这些地方是已经放置了皇后的地方,后面的区域还没开始放,就不用管
-     *
-     * @param board 棋盘
-     * @param row   行
-     * @param col   列
-     */
-    private boolean isValid(List<String> board, int row, int col) {
-        int n = board.size();
-        //1. 正上方是否有其他皇后
-        for (int i = 0; i < row; i++) {
-            if (board.get(i).charAt(col) == 'Q') {
-                return false;
-            }
+    public static TreeNode createBinaryTree(LinkedList<Integer> inputList) {
+        if (inputList == null || inputList.isEmpty()) {
+            return null;
         }
-        //2. 左上方是否有其他皇后
-        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
-            if (board.get(i).charAt(j) == 'Q') {
-                return false;
-            }
+        TreeNode node = null;
+        Integer data = inputList.removeFirst();
+        if (data != null) {
+            node = new TreeNode(data);
+            node.left = createBinaryTree(inputList);
+            node.right = createBinaryTree(inputList);
         }
-        //3. 右上方是否有其他皇后
-        for (int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {
-            if (board.get(i).charAt(j) == 'Q') {
-                return false;
-            }
-        }
-        return true;
+        return node;
     }
 
     public static void main(String[] args) {
         Solution solution = new Solution();
+        LinkedList<Integer> integers = new LinkedList<>(Arrays.asList(3, 9, null, null, 20, 15, null, null, 7));
+        TreeNode binaryTree = createBinaryTree(integers);
 
-        System.out.println(solution.solveNQueens(8));
+        System.out.println(solution.minDepth(binaryTree));
     }
 
 }
