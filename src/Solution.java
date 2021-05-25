@@ -1,5 +1,7 @@
 import java.util.*;
 
+import jdk.nashorn.internal.ir.WhileNode;
+
 
 /**
  * @author : xfhy
@@ -9,179 +11,98 @@ import java.util.*;
  */
 public class Solution {
 
-    //打开转盘锁
-    //从"0000"开始,转第一次,有8种可能,分别是"1000","9000","0100","0900"...
-    //可以把"0000"看成是根节点,然后可以把题目看成图,从根节点出发,每个节点都有8个相邻的节点.
-    //首先穷举完所有可能的结果,然后根据题目意思 跳过 已经访问过的+不允许访问的
+    static class ListNode {
+        ListNode next;
+        int data;
 
-    /**
-     * 将s[j]向上拨动一次
-     */
-    String plusOne(String s, int j) {
-        char[] chars = s.toCharArray();
-        if (chars[j] == '9') {
-            chars[j] = '0';
-        } else {
-            chars[j]++;
-        }
-        return new String(chars);
-    }
-
-    /**
-     * 将s[j]向下拨动一次
-     */
-    String minusOne(String s, int j) {
-        char[] chars = s.toCharArray();
-        if (chars[j] == '0') {
-            chars[j] = '9';
-        } else {
-            chars[j]--;
-        }
-        return new String(chars);
-    }
-
-    //这是代码框架
-    //缺陷1: 会走回头路. 比如0000拨到1000,但是等从队列中拿出1000时,还会拨出一个0000,如此往复,产生死循环
-    //缺陷2: 没有终止条件,按照题目要求,找到target就应该结束并返回拨动的次数
-    //缺陷3: 没有对deadends的处理,按道理这些死亡密码是不能出现的,也就是说遇到这些密码需要跳过,不进行操作
-    void BFS(String target) {
-        Queue<String> queue = new LinkedList<>();
-        queue.add("0000");
-
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            //将当前队列的所有节点向周围扩散
-            for (int i = 0; i < size; i++) {
-                String poll = queue.poll();
-                //判断是否到达终点
-                System.out.println(poll);
-
-                //将一个节点的相邻节点加入队列
-                for (int j = 0; j < 4; j++) {
-                    //将s[j]向上拨动一次  一个新密码形成
-                    String plusOneNewPwd = plusOne(poll, j);
-                    String minusOneNewPwd = minusOne(poll, j);
-                    queue.offer(plusOneNewPwd);
-                    queue.offer(minusOneNewPwd);
-                }
-            }
-            //在这里增加步数
+        public ListNode(int data) {
+            this.data = data;
         }
     }
 
-    //答题
-    //还有一个可以优化的点: deads和visited都是用来记录不合法的密码,那么可以就使用deads一个来装就行了
-    int openLock(String[] deadends, String target) {
-        //记录需要跳过的死亡密码
-        Set<String> deads = new HashSet<>(Arrays.asList(deadends));
-        //记录访问过的密码  不走回头路
-        Set<String> visited = new HashSet<>();
-        visited.add("0000");
-
-        Queue<String> queue = new LinkedList<>();
-        if (!deads.contains("0000")) {
-            queue.add("0000");
+    //1. 判定链表中是否含有环
+    boolean hasCycle(ListNode head) {
+        ListNode fast, slow;
+        //初始化快慢指针指向头节点
+        fast = slow = head;
+        while (fast != null && fast.next != null) {
+            //快指针每次前进两步
+            fast = fast.next.next;
+            //慢指针每次前进一步
+            slow = slow.next;
+            //如果存在环,快慢指针必然相遇  因为此时快指针已经"超圈"了
+            if (fast == slow) return true;
         }
-
-        int step = 0;
-
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                String poll = queue.poll();
-                //判断是否到达终点
-                if (target.equals(poll)) {
-                    return step;
-                }
-                //将一个节点的相邻节点加入队列
-                for (int j = 0; j < 4; j++) {
-                    //将s[j]向上拨动一次,一个新密码形成
-                    String plusOneNewPwd = plusOne(poll, j);
-                    if (!deads.contains(plusOneNewPwd) && !visited.contains(plusOneNewPwd)) {
-                        queue.add(plusOneNewPwd);
-                        visited.add(plusOneNewPwd);
-                    }
-
-                    String minusOneNewPwd = minusOne(poll, j);
-                    if (!deads.contains(minusOneNewPwd) && !visited.contains(minusOneNewPwd)) {
-                        queue.add(minusOneNewPwd);
-                        visited.add(minusOneNewPwd);
-                    }
-                }
-            }
-            //增加步数
-            step++;
-        }
-
-        return -1;
+        return false;
     }
 
-    //答题2
-    //执行用时：
-    //93 ms
-    //, 在所有 Java 提交中击败了
-    //76.05%
-    //的用户
-    //内存消耗：
-    //44.3 MB
-    //, 在所有 Java 提交中击败了
-    //36.87%
-    //的用户
-    int openLock2(String[] deadends, String target) {
-        //记录需要跳过的死亡密码
-        Set<String> deads = new HashSet<>(Arrays.asList(deadends));
-        Queue<String> queue = new LinkedList<>();
-        if (!deads.contains("0000")) {
-            queue.add("0000");
+    //2. 已知链表中含有环,返回这个环的起始位置
+    //思路: 假设快指针与慢指针相遇时,慢指针走了k步,那么快指针肯定走了2k步.假设k这里离环的起始位置是m步,那么起点到环的起始位置就是k-m,快指针再走k-m步也是环的起始位置.
+    //在相遇时,将慢指针回到起始点,重新出发,再次与快指针相遇时,那么就是环的起始位置
+    ListNode detectNode(ListNode head) {
+        ListNode fast, slow;
+        fast = slow = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if (fast == slow) break;
         }
-
-        int step = 0;
-
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                String poll = queue.poll();
-                //判断是否到达终点
-                if (target.equals(poll)) {
-                    return step;
-                }
-                //将一个节点的相邻节点加入队列
-                for (int j = 0; j < 4; j++) {
-                    //将s[j]向上拨动一次,一个新密码形成
-                    String plusOneNewPwd = plusOne(poll, j);
-                    if (!deads.contains(plusOneNewPwd)) {
-                        queue.add(plusOneNewPwd);
-                        deads.add(plusOneNewPwd);
-                    }
-
-                    String minusOneNewPwd = minusOne(poll, j);
-                    if (!deads.contains(minusOneNewPwd)) {
-                        queue.add(minusOneNewPwd);
-                        deads.add(minusOneNewPwd);
-                    }
-                }
-            }
-            //增加步数
-            step++;
+        //慢指针重新指向head
+        slow = head;
+        while (fast != slow) {
+            //两个指针以相同的速度前进
+            fast = fast.next;
+            slow = slow.next;
         }
-
-        return -1;
+        //两个指针相遇的那个单链表节点就是环的起点
+        return fast;
     }
+
+    //3. 寻找无环单链表的中点(重要作用:其中之一是对链表进行归并排序)
+    //思路: 快慢指针,快指针一次走2步,快指针到终点时,慢指针就刚好在中间
+    ListNode findMiddleNode(ListNode head) {
+        ListNode fast, slow;
+        fast = slow = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        //slow就在中间位置
+        return slow;
+    }
+
+    //4. 寻找单链表的倒数第k个元素
+    //思路: 还是快慢指针,让快指针先走k步,然后再让快慢指针同速前进,当快指针到终点时,慢指针就是倒数第k个元素(这里为了简化,假设k不会超过链表长度)
+    ListNode findLastK(ListNode head, int k) {
+        ListNode fast, slow;
+        fast = slow = head;
+        while (k-- > 0) fast = fast.next;
+        while (fast != null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return slow;
+    }
+
 
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-        System.out.println(solution.openLock(new String[]{"0110"}, "4500"));
-        System.out.println(solution.openLock(new String[]{"0201", "0101", "0102", "1212", "2002"}, "0202"));
-        System.out.println(solution.openLock(new String[]{"8887", "8889", "8878", "8898", "8788", "8988", "7888", "9888"}, "8888"));
-        System.out.println(solution.openLock(new String[]{"8888"}, "0009"));
-        System.out.println(solution.openLock(new String[]{"0000"}, "8888"));
+        ListNode node1 = new ListNode(1);
+        ListNode node2 = new ListNode(2);
+        ListNode node3 = new ListNode(3);
+        ListNode node4 = new ListNode(4);
+        ListNode node5 = new ListNode(5);
+        node1.next = node2;
+        node2.next = node3;
+        node3.next = node4;
+        node4.next = node5;
+        //node5.next = node2;
 
-        System.out.println(solution.openLock2(new String[]{"0110"}, "4500"));
-        System.out.println(solution.openLock2(new String[]{"0201", "0101", "0102", "1212", "2002"}, "0202"));
-        System.out.println(solution.openLock2(new String[]{"8887", "8889", "8878", "8898", "8788", "8988", "7888", "9888"}, "8888"));
-        System.out.println(solution.openLock2(new String[]{"8888"}, "0009"));
-        System.out.println(solution.openLock2(new String[]{"0000"}, "8888"));
+        System.out.println(solution.hasCycle(node1));
+        //System.out.println(solution.detectNode(node1).data);
+        System.out.println(solution.findMiddleNode(node1).data);
+        System.out.println(solution.findLastK(node1,3).data);
     }
 
 }
