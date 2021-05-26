@@ -21,6 +21,7 @@ public class Solution {
     }
 
     //1. 判定链表中是否含有环
+    //141. 环形链表
     boolean hasCycle(ListNode head) {
         ListNode fast, slow;
         //初始化快慢指针指向头节点
@@ -58,8 +59,32 @@ public class Solution {
         return fast;
     }
 
+    //142. 环形链表 II   下面这段代码是用来答题的
+    ListNode detectNode2(ListNode head) {
+        if (head == null || head.next == null) {
+            return null;
+        }
+        ListNode fast, slow;
+        fast = slow = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if (fast == slow) break;
+        }
+        //慢指针重新指向head
+        slow = head;
+        while (fast != null && fast != slow) {
+            //两个指针以相同的速度前进
+            fast = fast.next;
+            slow = slow.next;
+        }
+        //两个指针相遇的那个单链表节点就是环的起点
+        return fast;
+    }
+
     //3. 寻找无环单链表的中点(重要作用:其中之一是对链表进行归并排序)
     //思路: 快慢指针,快指针一次走2步,快指针到终点时,慢指针就刚好在中间
+    //876. 链表的中间结点
     ListNode findMiddleNode(ListNode head) {
         ListNode fast, slow;
         fast = slow = head;
@@ -73,6 +98,7 @@ public class Solution {
 
     //4. 寻找单链表的倒数第k个元素
     //思路: 还是快慢指针,让快指针先走k步,然后再让快慢指针同速前进,当快指针到终点时,慢指针就是倒数第k个元素(这里为了简化,假设k不会超过链表长度)
+    //剑指 Offer 22. 链表中倒数第k个节点
     ListNode findLastK(ListNode head, int k) {
         ListNode fast, slow;
         fast = slow = head;
@@ -89,7 +115,7 @@ public class Solution {
         Solution solution = new Solution();
 
         ListNode node1 = new ListNode(1);
-        ListNode node2 = new ListNode(2);
+        /*ListNode node2 = new ListNode(2);
         ListNode node3 = new ListNode(3);
         ListNode node4 = new ListNode(4);
         ListNode node5 = new ListNode(5);
@@ -97,12 +123,12 @@ public class Solution {
         node2.next = node3;
         node3.next = node4;
         node4.next = node5;
-        //node5.next = node2;
+        node5.next = node2;*/
 
-        System.out.println(solution.hasCycle(node1));
-        //System.out.println(solution.detectNode(node1).data);
-        System.out.println(solution.findMiddleNode(node1).data);
-        System.out.println(solution.findLastK(node1,3).data);
+//        System.out.println(solution.hasCycle(node1));
+        System.out.println(solution.detectNode(node1).data);
+//        System.out.println(solution.findMiddleNode(node1).data);
+//        System.out.println(solution.findLastK(node1,3).data);
     }
 
 }
