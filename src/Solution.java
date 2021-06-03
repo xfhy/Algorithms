@@ -1,134 +1,83 @@
-import java.util.*;
-
-import jdk.nashorn.internal.ir.WhileNode;
 
 
 /**
  * @author : xfhy
  * Create time : 2021年05月21日08:58:46
- * Description : 752. 打开转盘锁
+ * Description : 左右指针常用算法
  * source : https://leetcode-cn.com/problems/open-the-lock/
  */
 public class Solution {
 
-    static class ListNode {
-        ListNode next;
-        int data;
+    /**
+     * 二分查找基本框架
+     */
+    int binarySearch(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            }
+        }
+        return -1;
+    }
 
-        public ListNode(int data) {
-            this.data = data;
+    //两数之和
+    //输入一个已按照升序排列的有序数组nums和一个目标target,在nums中找到2个数使得它们相加之和等于target,请返回这2个数的索引(索引从1开始算).
+    //思路: 只要数组有序,首先应该想到双指针技巧.  这道题的解法有点像二分搜索,通过比较2个指针的sum与target的大小,然后移动left和right的指针.
+    // sum比target大,说明需要查找的2个数的索引在right的左边,现在只需要把right指针左移. sum比target小,则只需要把left右移.
+    int[] twoSum(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left < right) {
+            int sum = nums[left] + nums[right];
+            if (sum == target) {
+                //因为索引从1开始算,这里需要+1
+                return new int[]{left + 1, right + 1};
+            } else if (sum < target) {
+                left++;
+            } else if (sum > target) {
+                right--;
+            }
+        }
+        return new int[]{-1, -1};
+    }
+
+    //反转数组
+    //思路: 双指针,left在最前面,right在最后面,交换2个数,然后left往右移,right往左移
+    void reverse(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        int temp;
+        while (left < right) {
+            //交换2个指针处的元素
+            temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+
+            left++;
+            right--;
         }
     }
 
-    //1. 判定链表中是否含有环
-    //141. 环形链表
-    boolean hasCycle(ListNode head) {
-        ListNode fast, slow;
-        //初始化快慢指针指向头节点
-        fast = slow = head;
-        while (fast != null && fast.next != null) {
-            //快指针每次前进两步
-            fast = fast.next.next;
-            //慢指针每次前进一步
-            slow = slow.next;
-            //如果存在环,快慢指针必然相遇  因为此时快指针已经"超圈"了
-            if (fast == slow) return true;
-        }
-        return false;
-    }
-
-    //2. 已知链表中含有环,返回这个环的起始位置
-    //思路: 假设快指针与慢指针相遇时,慢指针走了k步,那么快指针肯定走了2k步.假设k这里离环的起始位置是m步,那么起点到环的起始位置就是k-m,快指针再走k-m步也是环的起始位置.
-    //在相遇时,将慢指针回到起始点,重新出发,再次与快指针相遇时,那么就是环的起始位置
-    ListNode detectNode(ListNode head) {
-        ListNode fast, slow;
-        fast = slow = head;
-        while (fast != null && fast.next != null) {
-            fast = fast.next.next;
-            slow = slow.next;
-            if (fast == slow) break;
-        }
-        //慢指针重新指向head
-        slow = head;
-        while (fast != slow) {
-            //两个指针以相同的速度前进
-            fast = fast.next;
-            slow = slow.next;
-        }
-        //两个指针相遇的那个单链表节点就是环的起点
-        return fast;
-    }
-
-    //142. 环形链表 II   下面这段代码是用来答题的
-    ListNode detectNode2(ListNode head) {
-        if (head == null || head.next == null) {
-            return null;
-        }
-        ListNode fast, slow;
-        fast = slow = head;
-        while (fast != null && fast.next != null) {
-            fast = fast.next.next;
-            slow = slow.next;
-            if (fast == slow) break;
-        }
-        //慢指针重新指向head
-        slow = head;
-        while (fast != null && fast != slow) {
-            //两个指针以相同的速度前进
-            fast = fast.next;
-            slow = slow.next;
-        }
-        //两个指针相遇的那个单链表节点就是环的起点
-        return fast;
-    }
-
-    //3. 寻找无环单链表的中点(重要作用:其中之一是对链表进行归并排序)
-    //思路: 快慢指针,快指针一次走2步,快指针到终点时,慢指针就刚好在中间
-    //876. 链表的中间结点
-    ListNode findMiddleNode(ListNode head) {
-        ListNode fast, slow;
-        fast = slow = head;
-        while (fast != null && fast.next != null) {
-            fast = fast.next.next;
-            slow = slow.next;
-        }
-        //slow就在中间位置
-        return slow;
-    }
-
-    //4. 寻找单链表的倒数第k个元素
-    //思路: 还是快慢指针,让快指针先走k步,然后再让快慢指针同速前进,当快指针到终点时,慢指针就是倒数第k个元素(这里为了简化,假设k不会超过链表长度)
-    //剑指 Offer 22. 链表中倒数第k个节点
-    ListNode findLastK(ListNode head, int k) {
-        ListNode fast, slow;
-        fast = slow = head;
-        while (k-- > 0) fast = fast.next;
-        while (fast != null) {
-            fast = fast.next;
-            slow = slow.next;
-        }
-        return slow;
-    }
 
 
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-        ListNode node1 = new ListNode(1);
-        /*ListNode node2 = new ListNode(2);
-        ListNode node3 = new ListNode(3);
-        ListNode node4 = new ListNode(4);
-        ListNode node5 = new ListNode(5);
-        node1.next = node2;
-        node2.next = node3;
-        node3.next = node4;
-        node4.next = node5;
-        node5.next = node2;*/
+//        System.out.println(solution.binarySearch(new int[]{1, 2, 3, 4, 5}, 0));
 
-//        System.out.println(solution.hasCycle(node1));
-        System.out.println(solution.detectNode(node1).data);
-//        System.out.println(solution.findMiddleNode(node1).data);
-//        System.out.println(solution.findLastK(node1,3).data);
+        /*int[] twoSum = solution.twoSum(new int[]{3, 5, 6, 10, 15}, 8);
+        System.out.println(twoSum[0] + "," + twoSum[1]);*/
+
+        int[] nums = new int[]{3, 5, 6, 10, 15};
+        solution.reverse(nums);
+        for (int num : nums) {
+            System.out.println(num);
+        }
+
     }
 
 }
