@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author : xfhy
@@ -68,12 +70,72 @@ public class Solution {
         return len == Integer.MAX_VALUE ? "" : s.substring(start, start + len);
     }
 
+    /**
+     * 找所有字符异位词(全排列)
+     * 给定一个字符串S和一个非空字符串T,找到S中所有是T的字母异位词(就是全排列)的子串,返回这些子串的起始索引
+     */
+    List<Integer> findAnagrams(String s, String t) {
+        //t中字符出现次数
+        HashMap<String, Integer> need = new HashMap<>();
+        //窗口中相应字符出现次数
+        HashMap<String, Integer> window = new HashMap<>();
+
+        for (int i = 0; i < t.length(); i++) {
+            String c = String.valueOf(t.charAt(i));
+            need.put(c, need.getOrDefault(c, 0) + 1);
+        }
+
+        List<Integer> res = new LinkedList<>();
+
+        int left = 0, right = 0;
+        int valid = 0;
+        while (right < s.length()) {
+            //c是将移入窗口的字符
+            String c = String.valueOf(s.charAt(right));
+            //窗口右移
+            right++;
+            //需要找这个字符
+            if (need.get(c) != null) {
+                //窗口中字符个数+1
+                window.put(c, window.getOrDefault(c, 0) + 1);
+                //如果窗口中该字符个数 等于 need中该字符的个数  则需要更新valid
+                if (window.get(c).equals(need.get(c))) {
+                    valid++;
+                }
+            }
+
+            //判断左侧窗口是否需要收缩    右边减去左边长度肯定得大于t的长度才行,不然就不能收缩了
+            while (right - left >= t.length()) {
+                //满足要求时将结果记录下来
+                if (valid == need.size()) {
+                    res.add(left);
+                }
+                //窗口往右边移  删除最左边字符
+                String d = String.valueOf(s.charAt(left));
+                left++;
+                //窗口内数据更新
+                if (need.get(d) != null) {
+                    if (window.get(d).equals(need.get(d))) {
+                        valid--;
+                    }
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+
+        }
+
+        return res;
+    }
+
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-        String minWindow = solution.minWindow("AABBCCDGEDDS", "BCA");
-        System.out.println("\n");
-        System.out.println(minWindow);
+//        String minWindow = solution.minWindow("AABBCCDGEDDS", "BCA");
+//        System.out.println("\n");
+//        System.out.println(minWindow);
+
+        List<Integer> anagrams = solution.findAnagrams("wocaoaadda", "ad");
+        System.out.println(anagrams);
     }
 
 }
