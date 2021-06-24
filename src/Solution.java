@@ -2,6 +2,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.*;
+
 /**
  * @author : xfhy
  * Create time : 2021年06月17日08:58:46
@@ -127,6 +129,30 @@ public class Solution {
         return res;
     }
 
+    /**
+     * 最长无重复子串
+     * 思路: 将子串放入窗口中,如果有重复元素则缩小窗口
+     */
+    int lengthOfLongestSubstring(String s) {
+        HashMap<String, Integer> window = new HashMap<>();
+        int res = 0;
+        int left = 0, right = 0;
+        while (right < s.length()) {
+            String c = String.valueOf(s.charAt(right));
+            window.put(c, window.getOrDefault(c, 0) + 1);
+            right++;
+            //有重复的字符  则需要缩小窗口
+            while (window.get(c) > 1) {
+                String d = String.valueOf(s.charAt(left));
+                left++;
+                window.put(d, window.get(d) - 1);
+            }
+            //当上面的while循环完成之后,就没有重复字符了,在这里更新一下答案
+            res = Math.max(res, right - left);
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         Solution solution = new Solution();
 
@@ -134,8 +160,11 @@ public class Solution {
 //        System.out.println("\n");
 //        System.out.println(minWindow);
 
-        List<Integer> anagrams = solution.findAnagrams("wocaoaadda", "ad");
-        System.out.println(anagrams);
+//        List<Integer> anagrams = solution.findAnagrams("wocaoaadda", "ad");
+//        System.out.println(anagrams);
+
+        System.out.println(solution.lengthOfLongestSubstring("aaaabba"));
+
     }
 
 }
