@@ -1,156 +1,36 @@
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.swing.*;
+import java.util.Arrays;
 
 /**
  * @author : xfhy
- * Create time : 2021年06月17日08:58:46
- * Description : 滑动窗口
+ * Create time : 2021年06月29日08:58:46
+ * Description : 最长递增子序列
  * source :
  */
 public class Solution {
 
     /**
-     * 最小覆盖子串
-     *
-     * @param s 全部字符串
-     * @param t 需要在s中找到包含t的最小子串
+     * 最长递增子序列
+     * 思路: dp[i]表示nums[i]处的最长递增子序列,假设d[0..i-1]是已知的,如果求dp[i]? 只需要在nums[0..i]中找到比nums[i]小的,并且此处是dp最大的,然后加上1即可.
+     * 这样就能保证在dp[i]处依然是最长的递增子序列
      */
-    public String minWindow(String s, String t) {
-        HashMap<String, Integer> need = new HashMap<>(), window = new HashMap<>();
-        for (int i = 0; i < t.length(); i++) {
-            String c = String.valueOf(t.charAt(i));
-            need.put(c, need.getOrDefault(c, 0) + 1);
-        }
-
-        int left = 0, right = 0;
-        //窗口中满足need条件的字符个数
-        int valid = 0;
-        //记录最小字串的起始索引及长度
-        int start = 0, len = Integer.MAX_VALUE;
-        while (right < s.length()) {
-            //c是将移入窗口的字符
-            String c = String.valueOf(s.charAt(right));
-            //右移窗口
-            right++;
-            //进行窗口内数据的一系列更新   need中有这个字符
-            if (need.get(c) != null) {
-                //窗口中相应字符个数+1
-                window.put(c, window.getOrDefault(c, 0) + 1);
-                //如果窗口中该字符个数与need中该字符个数相等,则说明该字符收集满了
-                if (need.get(c).equals(window.get(c))) {
-                    valid++;
-                }
-            }
-
-            System.out.printf("window: [%d,%d)", left, right);
-
-            //need中的字符全部都收集齐了,则收缩左侧窗口
-            while (valid == need.size()) {
-                //在这里更新最小覆盖子串
-                if (right - left < len) {
-                    start = left;
-                    len = right - left;
-                }
-                //d是将移出窗口的字符
-                String d = String.valueOf(s.charAt(left));
-                //左移窗口
-                left++;
-                //进行窗口内数据的一系列更新   -> need含有该字符,才需要更新窗口内数据
-                if (need.get(d) != null) {
-                    //need中的该字符个数比窗口中该字符个数相等,则需要将valid-1
-                    if (need.get(d).equals(window.get(d))) {
-                        valid--;
-                    }
-                    //窗口中相应字符个数-1
-                    window.put(d, window.get(d) - 1);
+    int lengthOfLIS(int[] nums) {
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp, 1);
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = 0; j < i; j++) {
+                //只需要在nums[0..i]中找到比nums[i]小的,并且此处是dp最大的,然后加上1即可.
+                if (nums[i] > nums[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
             }
         }
-        return len == Integer.MAX_VALUE ? "" : s.substring(start, start + len);
-    }
-
-    /**
-     * 找所有字符异位词(全排列)
-     * 给定一个字符串S和一个非空字符串T,找到S中所有是T的字母异位词(就是全排列)的子串,返回这些子串的起始索引
-     */
-    List<Integer> findAnagrams(String s, String t) {
-        //t中字符出现次数
-        HashMap<String, Integer> need = new HashMap<>();
-        //窗口中相应字符出现次数
-        HashMap<String, Integer> window = new HashMap<>();
-
-        for (int i = 0; i < t.length(); i++) {
-            String c = String.valueOf(t.charAt(i));
-            need.put(c, need.getOrDefault(c, 0) + 1);
-        }
-
-        List<Integer> res = new LinkedList<>();
-
-        int left = 0, right = 0;
-        int valid = 0;
-        while (right < s.length()) {
-            //c是将移入窗口的字符
-            String c = String.valueOf(s.charAt(right));
-            //窗口右移
-            right++;
-            //需要找这个字符
-            if (need.get(c) != null) {
-                //窗口中字符个数+1
-                window.put(c, window.getOrDefault(c, 0) + 1);
-                //如果窗口中该字符个数 等于 need中该字符的个数  则需要更新valid
-                if (window.get(c).equals(need.get(c))) {
-                    valid++;
-                }
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < dp.length; i++) {
+            if (dp[i] > max) {
+                max = dp[i];
             }
-
-            //判断左侧窗口是否需要收缩    右边减去左边长度肯定得大于t的长度才行,不然就不能收缩了
-            while (right - left >= t.length()) {
-                //满足要求时将结果记录下来
-                if (valid == need.size()) {
-                    res.add(left);
-                }
-                //窗口往右边移  删除最左边字符
-                String d = String.valueOf(s.charAt(left));
-                left++;
-                //窗口内数据更新
-                if (need.get(d) != null) {
-                    if (window.get(d).equals(need.get(d))) {
-                        valid--;
-                    }
-                    window.put(d, window.get(d) - 1);
-                }
-            }
-
         }
-
-        return res;
-    }
-
-    /**
-     * 最长无重复子串
-     * 思路: 将子串放入窗口中,如果有重复元素则缩小窗口
-     */
-    int lengthOfLongestSubstring(String s) {
-        HashMap<String, Integer> window = new HashMap<>();
-        int res = 0;
-        int left = 0, right = 0;
-        while (right < s.length()) {
-            String c = String.valueOf(s.charAt(right));
-            window.put(c, window.getOrDefault(c, 0) + 1);
-            right++;
-            //有重复的字符  则需要缩小窗口
-            while (window.get(c) > 1) {
-                String d = String.valueOf(s.charAt(left));
-                left++;
-                window.put(d, window.get(d) - 1);
-            }
-            //当上面的while循环完成之后,就没有重复字符了,在这里更新一下答案
-            res = Math.max(res, right - left);
-        }
-        return res;
+        return max;
     }
 
     public static void main(String[] args) {
@@ -163,7 +43,7 @@ public class Solution {
 //        List<Integer> anagrams = solution.findAnagrams("wocaoaadda", "ad");
 //        System.out.println(anagrams);
 
-        System.out.println(solution.lengthOfLongestSubstring("aaaabba"));
+        System.out.println(solution.lengthOfLIS(new int[]{1, 2, 4, 234, 23, 5}));
 
     }
 
