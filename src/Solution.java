@@ -1,43 +1,48 @@
-import java.util.Arrays;
+
 
 /**
  * @author : xfhy
  * Create time : 2021年07月1日08:58:46
- * Description : 300.最长递增子序列
- * source : https://leetcode-cn.com/problems/longest-increasing-subsequence/
+ * Description : 剑指 Offer 42. 连续子数组的最大和
+ * source : https://leetcode-cn.com/problems/lian-xu-zi-shu-zu-de-zui-da-he-lcof/
  */
 public class Solution {
 
     /**
-     * 最长递增子序列
-     * 思路: dp[i]表示nums[i]处的最长递增子序列,假设d[0..i-1]是已知的,如果求dp[i]? 只需要在nums[0..i]中找到比nums[i]小的,并且此处是dp最大的,然后加上1即可.
-     * 这样就能保证在dp[i]处依然是最长的递增子序列
-     *
-     * 明确dp数组所存数据的含义.   最长递增子序列->dp[i]->nums[i]处最长递增子序列
-     * 根据dp数组的定义,运用数学归纳法的思想,假设dp[0..i-1]都已知,想办法求出dp[i]
+     * 最大子数组问题
+     * 求数组nums中和最大的子数组,返回这个子数组的和
+     * 思路1: 假设已经算出了dp[i-1],那么dp[i]有两种选择,要么与前面的相邻子数组连接,形成一个更大的子数组;要么不与前面的子数组连接,自成一派,自己作为一个子数组.
+     * dp[i]=max(nums[i],nums[i]+dp[i-1])     ,要么和前面的子数组合并,要么自成一派.
      */
-    int lengthOfLIS(int[] nums) {
-        int[] dp = new int[nums.length];
-        Arrays.fill(dp, 1);
-        for (int i = 0; i < nums.length; i++) {
-            for (int j = 0; j < i; j++) {
-                //只需要在nums[0..i]中找到比nums[i]小的,并且此处是dp最大的,然后加上1即可.
-                if (nums[i] > nums[j]) {
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
-                }
-            }
+    int maxSubArray(int[] nums) {
+        int len = nums.length;
+        if (len == 0) return 0;
+
+
+        int[] dp = new int[len];
+        dp[0] = nums[0];
+        for (int i = 1; i < len; i++) {
+            //状态转移方程
+            dp[i] = Math.max(nums[i], nums[i] + dp[i - 1]);
         }
-        int res = 0;
-        for (int i = 0; i < dp.length; i++) {
-            res = Math.max(res, dp[i]);
+
+        //求dp数组中的最大值
+        int res = Integer.MIN_VALUE;
+        for (int i : dp) {
+            res = Math.max(res, i);
         }
         return res;
+    }
+
+    //todo xfhy 思路2: 状态压缩
+    int maxSubArray2(int[] nums) {
+        return 0;
     }
 
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-        System.out.println(solution.lengthOfLIS(new int[]{1, 2, 4, 234, 23, 5}));
+        System.out.println(solution.maxSubArray(new int[]{1, 2, 4, 234, 23, 5}));
 
     }
 
