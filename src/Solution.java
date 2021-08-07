@@ -2,62 +2,40 @@
 
 /**
  * @author : xfhy
- * Create time : 2021年07月1日08:58:46
- * Description : 剑指 Offer 42. 连续子数组的最大和
- * source : https://leetcode-cn.com/problems/lian-xu-zi-shu-zu-de-zui-da-he-lcof/
+ * Create time : 2021年08月8日08:58:46
+ * Description : 最长公共子序列的长度
+ * source :
  */
 public class Solution {
 
-    /**
-     * 最大子数组问题
-     * 求数组nums中和最大的子数组,返回这个子数组的和
-     * 思路1: 假设已经算出了dp[i-1],那么dp[i]有两种选择,要么与前面的相邻子数组连接,形成一个更大的子数组;要么不与前面的子数组连接,自成一派,自己作为一个子数组.
-     * dp[i]=max(nums[i],nums[i]+dp[i-1])     ,要么和前面的子数组合并,要么自成一派.
-     */
-    int maxSubArray(int[] nums) {
-        int len = nums.length;
-        if (len == 0) return 0;
+    //给定2个字符串s1和s2,求最长公共子序列的长度(lcs)
 
+    //1. 确定dp数组含义,dp[i][j]是s1[0..i]和s2[0..j]的最长公共子序列的长度
+    //2. 确定base case,让索引为0的行和列表示空串,dp[0][j]和dp[i][0]都应该初始化为0
+    //3. 找状态转移方程,对于dp[i][j]来说,
+    //      如果s1[i]==s2[j],那么这个字符肯定在lcs里面,只要知道s1[0..i-1]和s2[0..j-1]的lcs然后加1就行了.
+    //      如果s1[i]!=s2[j],那么有可能某个字符在lcs里面,但是我们不晓得哪个字符在lcs里面,将dp[i-1][j]和dp[i][j-1]取最大值即可
 
-        int[] dp = new int[len];
-        dp[0] = nums[0];
-        for (int i = 1; i < len; i++) {
-            //状态转移方程
-            dp[i] = Math.max(nums[i], nums[i] + dp[i - 1]);
-        }
-
-        //求dp数组中的最大值
-        int res = Integer.MIN_VALUE;
-        for (int i : dp) {
-            res = Math.max(res, i);
-        }
-        return res;
+    //1. 递归解法
+    int longestCommonSubsequence(String str1, String str2) {
+        return dp(str1, str2, str1.length() - 1, str2.length() - 1);
     }
 
-    // 思路2: 状态压缩,dp[i]仅仅与dp[i-1]有关,所以可以把dp数组去掉,只定义2个变量,从而压缩了空间
-    int maxSubArray2(int[] nums) {
-        int len = nums.length;
-        if (len == 0) return 0;
-
-        int dp_0 = nums[0];
-        int dp_1, res = dp_0;
-        for (int i = 1; i < nums.length; i++) {
-            //dp[i] = Math.max(nums[i], nums[i] + dp[i - 1]);
-            dp_1 = Math.max(nums[i], nums[i] + dp_0);
-            dp_0 = dp_1;
-            //向后推进时,顺便计算最大值
-            res = Math.max(dp_1, res);
+    int dp(String str1, String str2, int i, int j) {
+        if (i == -1 || j == -1) {
+            return 0;
         }
-
-        return res;
+        if (str1.charAt(i) == str2.charAt(j)) {
+            return dp(str1, str2, i - 1, j - 1) + 1;
+        } else {
+            return Math.max(dp(str1, str2, i - 1, j), dp(str1, str2, i, j - 1));
+        }
     }
 
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-        System.out.println(solution.maxSubArray(new int[]{1, 2, 4, 234, 23, 5}));
-        System.out.println(solution.maxSubArray2(new int[]{1, 2, 4, 234, 23, 5}));
-
+        System.out.println(solution.longestCommonSubsequence("abcde", "aceb"));
     }
 
 }
