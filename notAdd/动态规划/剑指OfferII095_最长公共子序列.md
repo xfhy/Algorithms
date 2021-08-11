@@ -17,7 +17,7 @@ public class Solution {
     //      如果s1[i]==s2[j],那么这个字符肯定在lcs里面,只要知道s1[0..i-1]和s2[0..j-1]的lcs然后加1就行了.
     //      如果s1[i]!=s2[j],那么有可能某个字符在lcs里面,但是我们不晓得哪个字符在lcs里面,将dp[i-1][j]和dp[i][j-1]取最大值即可
 
-    //1. 递归解法
+    //1. 递归解法   这种解法会超出时间限制
     int longestCommonSubsequence(String str1, String str2) {
         return dp(str1, str2, str1.length() - 1, str2.length() - 1);
     }
