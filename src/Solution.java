@@ -3,91 +3,20 @@
 /**
  * @author : xfhy
  * Create time : 2021年08月14日08:58:46
- * Description : 72. 经典动态规划:编辑距离  困难
- * source : https://leetcode-cn.com/problems/edit-distance/
+ * Description : 最长回文子序列
+ * source :
  */
 public class Solution {
 
-    //可以对一个字符串进行三种操作:插入一个字符,删除一个字符,替换一个字符
-    //现在给你两个字符串s1和s2,请计算s1转换成s2最少需要多少次操作
-
-    //思路1: 暴力解法  递归  思路清晰
-    // 搞2个索引i和j,分别从s1和s2的末尾出发,然后向前.
-    // 如果s1[i]==s2[j] 那么不需要做任何操作,i和j都向前移动
-    //如果s1[i]!=s2[j] 时,有3种情况,分别是增加字符、删除字符、替换字符  找出最小操作值即可
-    //base case : 当i或j完成时,返回对方字符串剩余的个数,这部分要么是需要删除的要么是需要增加的字符,但我们只需要知道操作个数就行
-
-    private String s1;
-    private String s2;
-
-    public int minDistance(String s1, String s2) {
-        this.s1 = s1;
-        this.s2 = s2;
-        //i,j 初始化,指向最后一个索引
-        return dp(s1.length() - 1, s2.length() - 1);
-    }
-
-    //dp函数定义: s1[0..i]和s2[0..j]的最小编辑距离是dp(i,j)
-    private int dp(int i, int j) {
-        //i走完了  返回对方字符串剩余的字符个数
-        if (i == -1) {
-            return j + 1;
-        }
-        if (j == -1) {
-            return i + 1;
-        }
-
-        //做选择
-        if (s1.charAt(i) == s2.charAt(j)) {
-            //什么都不用操作
-            return dp(i - 1, j - 1);
-        } else {
-            int add = dp(i, j - 1) + 1;
-            int replace = dp(i - 1, j - 1) + 1;
-            int delete = dp(i - 1, j) + 1;
-            return Math.min(Math.min(add, replace), delete);
-        }
-    }
-
-    //思路2 : 在上面解法的基础上,加上备忘录  记录所有的dp[i][j]值,然后自底向上得到答案. 上面的递归是自顶向下
-    public int minDistance2(String s1, String s2) {
-        int m = s1.length();
-        int n = s2.length();
-        int[][] dp = new int[m + 1][n + 1];
-
-        //base case
-        for (int i = 1; i <= m; i++) {
-            //凡是j==0的情况,就是剩余i个字符串
-            dp[i][0] = i;
-        }
-        for (int j = 1; j <= n; j++) {
-            dp[0][j] = j;
-        }
-
-        //自底向上
-        for (int i = 1; i <= m; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
-                    dp[i][j] = dp[i - 1][j - 1];
-                } else {
-                    dp[i][j] = Math.min(
-                            dp[i][j - 1] + 1, Math.min(
-                                    dp[i - 1][j] + 1,
-                                    dp[i - 1][j - 1] + 1)
-                    );
-                }
-            }
-        }
-
-        return dp[m][n];
-    }
+    //思路:
+    //定义dp数组,在子串s[i..j]中,最长回文子序列的长度为dp[i][j]
+    //如果已经知道了,dp[i+1][j-1]的值,那么要求dp[i][j] :
+    //  如果s[i]==s[j],那么dp[i][j]=dp[i+1][j-1]+2,因为多出来的2个是可以加入最长回文子序列里面的
+    //  如果s[i]!=s[j],那么有可能在dp[i][j-1]或者dp[i+1][j]中可能存在更长的回文子序列,需要找它们的最大值
 
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-//        System.out.println(solution.longestCommonSubsequence("abcde", "aceb"));
-        System.out.println(solution.minDistance("rad", "apple"));
-        System.out.println(solution.minDistance2("rad", "apple"));
     }
 
 }
