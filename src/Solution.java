@@ -5,9 +5,9 @@ import java.util.List;
 
 /**
  * @author : xfhy
- * Create time : 2021年09月6日06:50:46
- * Description : 77. 组合
- * source : https://leetcode-cn.com/problems/combinations/submissions/
+ * Create time : 2021年09月11日07:20:46
+ * Description : 剑指 Offer II 085. 生成匹配的括号
+ * source : https://leetcode-cn.com/problems/IDBivT/
  */
 public class Solution {
 
@@ -25,42 +25,63 @@ public class Solution {
         }
     }*/
 
-    //输入两个数字 n, k，算法输出 [1..n] 中 k 个数字的所有组合。
-    //思路: 回溯法
-    private List<List<Integer>> res = new LinkedList<>();
+    //思路:
+    //n对括号,那么就是有2n个位置,每个位置可能会放置"("或者")"
+    //一个合法的字符串组合p,肯定是左右括号数量相等
+    //一个合法的字符串组合p,对于已经放置的i(0<=i<=len(p))个字符来说,左括号的数量肯定是大于等于右括号的数量的
+    //回溯法问题,先考虑穷举完所有答案,再考虑剪枝
 
-    public List<List<Integer>> combine(int n, int k) {
-        if (n <= 0 || k <= 0) {
-            return res;
-        }
-        List<Integer> track = new LinkedList<>();
-        backtrack(n, k, track, 1);
+    char[] choice = new char[]{'(', ')'};
+
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new LinkedList<>();
+        StringBuilder track = new StringBuilder();
+        //start=1,代表当前的位置,一共有2n个位置
+        backtrack(1, 2 * n, res, track);
         return res;
     }
 
-    private void backtrack(int n, int k, List<Integer> track, int start) {
-        //到达树的底部
-        if (track.size() == k) {
-            res.add(new LinkedList<>(track));
+    private void backtrack(int start, int n, List<String> res, StringBuilder track) {
+        //start表示当前的位置,当start==n+1时,说明全面已穷举完成 track长度为2n了
+        if (start == n + 1) {
+            if (stringIsLegal(track)) {
+                res.add(track.toString());
+            }
             return;
         }
-        //必须从start开始,不然就陷入无限递归中,因为start之前的肯定在track里面了
-        for (int i = start; i <= n; i++) {
-            //做选择
-            if (!track.contains(i)) {
-                track.add(i);
-            }
-            backtrack(n, k, track, i + 1);
-            //撤销选择
-            track.remove((Integer) i);
+        for (char c : choice) {
+            track.append(c);
+            backtrack(start + 1, n, res, track);
+            track.deleteCharAt(track.length() - 1);
         }
+    }
+
+    private boolean stringIsLegal(StringBuilder stringBuilder) {
+        int length = stringBuilder.length();
+        int leftCount = 0;
+        int rightCount = 0;
+        for (int i = 0; i < length; i++) {
+            if (stringBuilder.charAt(i) == '(') {
+                leftCount++;
+            } else {
+                rightCount++;
+            }
+            if (rightCount > leftCount) {
+                return false;
+            }
+        }
+        return leftCount == rightCount;
     }
 
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-        List<List<Integer>> combine = solution.combine(4, 2);
-        System.out.println(combine);
+//        System.out.println(solution.stringIsLegal(new StringBuilder("))((")));
+//        System.out.println(solution.stringIsLegal(new StringBuilder("()()")));
+//        System.out.println(solution.stringIsLegal(new StringBuilder("(())")));
+
+        List<String> res = solution.generateParenthesis(3);
+        System.out.println(res);
     }
 
 }
