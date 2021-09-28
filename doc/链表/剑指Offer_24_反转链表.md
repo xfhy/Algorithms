@@ -69,6 +69,22 @@ public class Solution {
         return last;
     }
 
+     //解法3: 递归
+    public ListNode reverseList(ListNode head) {
+        //base case
+        if (head == null || head.next == null) return head;
+
+        ListNode last = reverseList(head.next);
+        //System.out.println("head=" + head.val + "  last=" + last.val);
+
+        //第2个指向第一个(头节点)
+        head.next.next = head;
+        head.next = null;
+
+        //返回尾节点(最后的时候已经是头节点了)
+        return last;
+    }
+
     public static void main(String[] args) {
         ListNode head = new ListNode(4);
         ListNode next = new ListNode(5);

@@ -8,64 +8,44 @@ import java.util.*;
  */
 public class Solution {
 
-    //先拿出回溯算法模板
-    /*result = []
-    void backtrack(路径,选择列表){
-        if(满足结束条件) {
-            result.add(路径);
-            return;
-        }
-        for(选择 in 选择列表) {
-            做选择;
-            backtrack(路径,选择列表);
-            撤销选择
-        }
-    }*/
-    //思路: 假设当前搜索到第i个字符,且s[0..i-1]的所有字符已经被切割为若干个回文字符串,那么在接下来的搜索中,s[i..j]如果是回文字符串,则切割出来,继续搜索s[j]后面的
-    //base case : 切割的index到达s的长度
+    public static class ListNode {
+        int val;
+        ListNode next;
 
-
-    public List<List<String>> partition(String s) {
-        List<List<String>> res = new LinkedList<>();
-        List<String> track = new LinkedList<>();
-
-        //将s[i,j]是否为回文串先算出来
-        //设 f(i,j) 表示 s[i..j] 是否为回文串，那么有状态转移方程f(i+1,j-1)&&(s[i]==s[j]) ,x>=j
-        int length = s.length();
-        boolean[][] table = new boolean[length][length];
-        for (int i = 0; i < length; ++i) {
-            Arrays.fill(table[i], true);
+        ListNode(int x) {
+            val = x;
         }
-        for (int i = length - 1; i >= 0; --i) {
-            for (int j = i + 1; j < length; ++j) {
-                table[i][j] = (s.charAt(i) == s.charAt(j)) && table[i + 1][j - 1];
-            }
-        }
-
-        backtrack(res, track, s, 0, table);
-        return res;
     }
 
-    private void backtrack(List<List<String>> res, List<String> track, String s, int splitIndex, boolean[][] table) {
-        if (splitIndex == s.length()) {
-            res.add(new LinkedList<>(track));
-            return;
-        }
-        for (int i = splitIndex; i < s.length(); i++) {
-            if (table[splitIndex][i]) {
-                //splitIndex是每次选出来的切割点,切割出[splitIndex,i]的字符串     比如 a|ab
-                String substring = s.substring(splitIndex, i + 1);
-                track.add(substring);
-                backtrack(res, track, s, i + 1, table);
-                track.remove(track.size() - 1);
-            }
-        }
+    //递归解法
+    public ListNode reverseList(ListNode head) {
+        //base case
+        if (head == null || head.next == null) return head;
+
+        ListNode last = reverseList(head.next);
+        //System.out.println("head=" + head.val + "  last=" + last.val);
+
+        //第2个指向第一个(头节点)
+        head.next.next = head;
+        head.next = null;
+
+        //返回尾节点(最后的时候已经是头节点了)
+        return last;
     }
 
     public static void main(String[] args) {
         Solution solution = new Solution();
 
-        System.out.println(solution.partition("aab"));
+        ListNode head = new ListNode(4);
+        ListNode next = new ListNode(5);
+        head.next = next;
+        ListNode next1 = new ListNode(1);
+        next.next = next1;
+        ListNode next2 = new ListNode(9);
+        next1.next = next2;
+        ListNode result = solution.reverseList(head);
+
+        System.out.println(result.val);
     }
 
 }
