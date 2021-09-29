@@ -3,8 +3,8 @@ import java.util.*;
 /**
  * @author : xfhy
  * Create time : 2021年09月25日07:20:46
- * Description : 131. 分割回文串
- * source : https://leetcode-cn.com/problems/palindrome-partitioning/
+ * Description :
+ * source :
  */
 public class Solution {
 
@@ -33,6 +33,26 @@ public class Solution {
         return last;
     }
 
+    //4->5->1->9
+    //反转前3个
+
+    //反转链表前n个
+    ListNode afterNode=null;
+    public ListNode reverseN(ListNode head, int n) {
+        //base case 当n减到1时,说明已经到达前n的最后一个,把n的后面那个节点记录下来
+        if (n == 1) {
+            afterNode = head.next;
+            return head;
+        }
+        ListNode last = reverseN(head.next, n-1);
+
+        head.next.next = head;
+        //将n的后面个节点连起来
+        head.next = afterNode;
+
+        return last;
+    }
+
     public static void main(String[] args) {
         Solution solution = new Solution();
 
@@ -43,7 +63,7 @@ public class Solution {
         next.next = next1;
         ListNode next2 = new ListNode(9);
         next1.next = next2;
-        ListNode result = solution.reverseList(head);
+        ListNode result = solution.reverseN(head,3);
 
         System.out.println(result.val);
     }

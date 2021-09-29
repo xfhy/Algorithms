@@ -85,6 +85,23 @@ public class Solution {
         return last;
     }
 
+    //反转链表前n个
+    ListNode afterNode=null;
+    public ListNode reverseN(ListNode head, int n) {
+        //base case 当n减到1时,说明已经到达前n的最后一个,把n的后面那个节点记录下来
+        if (n == 1) {
+            afterNode = head.next;
+            return head;
+        }
+        ListNode last = reverseN(head.next, n-1);
+
+        head.next.next = head;
+        //将n的后面个节点连起来
+        head.next = afterNode;
+
+        return last;
+    }
+
     public static void main(String[] args) {
         ListNode head = new ListNode(4);
         ListNode next = new ListNode(5);
