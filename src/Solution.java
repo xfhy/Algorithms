@@ -1,5 +1,3 @@
-import java.util.*;
-
 /**
  * @author : xfhy
  * Create time : 2021年09月25日07:20:46
@@ -37,20 +35,31 @@ public class Solution {
     //反转前3个
 
     //反转链表前n个
-    ListNode afterNode=null;
+    ListNode afterNode = null;
+
     public ListNode reverseN(ListNode head, int n) {
         //base case 当n减到1时,说明已经到达前n的最后一个,把n的后面那个节点记录下来
         if (n == 1) {
             afterNode = head.next;
             return head;
         }
-        ListNode last = reverseN(head.next, n-1);
+        ListNode last = reverseN(head.next, n - 1);
 
         head.next.next = head;
         //将n的后面个节点连起来
         head.next = afterNode;
 
         return last;
+    }
+
+    //反转某个链表区间
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        //base case 如果m=1,那么相当于反转前N个
+        if (left == 1) {
+            return reverseN(head, right);
+        }
+        head.next = reverseBetween(head.next, left - 1, right - 1);
+        return head;
     }
 
     public static void main(String[] args) {
@@ -63,7 +72,7 @@ public class Solution {
         next.next = next1;
         ListNode next2 = new ListNode(9);
         next1.next = next2;
-        ListNode result = solution.reverseN(head,3);
+        ListNode result = solution.reverseBetween(head, 2, 4);
 
         System.out.println(result.val);
     }

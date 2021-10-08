@@ -102,6 +102,16 @@ public class Solution {
         return last;
     }
 
+    //反转某个链表区间
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        //base case 如果m=1,那么相当于反转前N个
+        if (left == 1) {
+            return reverseN(head, right);
+        }
+        head.next = reverseBetween(head.next, left - 1, right - 1);
+        return head;
+    }
+
     public static void main(String[] args) {
         ListNode head = new ListNode(4);
         ListNode next = new ListNode(5);
